@@ -1,0 +1,87 @@
+-- Lentelės User
+CREATE TABLE users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    role VARCHAR(50) DEFAULT 'USER'
+);
+
+-- Lentelės Category
+CREATE TABLE categories (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- Lentelės Product
+CREATE TABLE products (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL,
+    category_id BIGINT,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+);
+
+-- Lentelės Order
+CREATE TABLE orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    total DECIMAL(10,2) NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Lentelės OrderItem
+CREATE TABLE order_items (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT,
+    product_id BIGINT,
+    quantity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- -------------------------
+-- Pradinės informacijos įkėlimas
+-- -------------------------
+
+-- User lentelė
+INSERT INTO users (username, password, email, role)
+VALUES
+('admin', 'admin123', 'admin@example.com', 'ADMIN'),
+('user1', 'password1', 'user1@example.com', 'USER'),
+('user2', 'password2', 'user2@example.com', 'USER');
+
+-- Category lentelė
+INSERT INTO categories (name)
+VALUES
+('Electronics'),
+('Books'),
+('Clothing'),
+('Food');
+
+-- Product lentelė
+INSERT INTO products (name, description, price, category_id)
+VALUES
+('Laptop', 'High-performance laptop', 1200.00, 1),
+('Smartphone', 'Latest model smartphone', 800.00, 1),
+('Fiction Book', 'Interesting fiction novel', 15.99, 2),
+('Jeans', 'Comfortable blue jeans', 49.99, 3),
+('Pizza', 'Delicious cheese pizza', 9.99, 4);
+
+-- Order lentelė
+INSERT INTO orders (user_id, total)
+VALUES
+(1, 1250.00),
+(2, 65.98);
+
+-- OrderItem lentelė
+INSERT INTO order_items (order_id, product_id, quantity, price)
+VALUES
+(1, 1, 1, 1200.00),
+(1, 3, 2, 15.00),
+(2, 4, 1, 49.99),
+(2, 5, 2, 9.99);
+
